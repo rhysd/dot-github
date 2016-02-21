@@ -120,6 +120,30 @@ func NewRepositoryFromURL(u *url.URL) *Repository {
 	return nil
 }
 
+func baseDir() string {
+	env := os.Getenv("DOT_GITHUB_HOME")
+	if len(env) != 0 {
+		return env
+	}
+
+	u, err := user.Current()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return u.HomeDir
+}
+
+func TemplateDir() string {
+	d := path.Join(baseDir(), ".github")
+	if _, err := os.Stat(d); os.IsNotExist(err) {
+		if err := os.MkdirAll(d, os.ModeDir|0644); err != nil {
+			panic(err.Error())
+		}
+	}
+	return d
+}
+
 func main() {
 	flags := parseCmdArgs()
 	if flags.Help {
