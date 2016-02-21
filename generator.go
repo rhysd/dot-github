@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path"
@@ -34,7 +35,7 @@ func (g *Generator) applyTemplate(src_path string, dst_path string) {
 	}
 	defer src.Close()
 
-	dst, err := os.Open(dst_path)
+	dst, err := os.Create(dst_path)
 	if err != nil {
 		panic(err)
 	}
@@ -43,6 +44,8 @@ func (g *Generator) applyTemplate(src_path string, dst_path string) {
 	if _, err = io.Copy(dst, src); err != nil {
 		panic(err)
 	}
+
+	fmt.Println("Created " + dst_path)
 }
 
 func (g *Generator) generateFile(name string, fallback string) {
@@ -55,16 +58,16 @@ func (g *Generator) generateFile(name string, fallback string) {
 	if _, err := os.Stat(src); os.IsNotExist(err) {
 		return
 	}
-	dst := path.Join(g.repo.Path, name)
+	dst := path.Join(g.dotGithubDir, name)
 	g.applyTemplate(src, dst)
 }
 
 func (g *Generator) GenerateIssueTemplate() {
-	g.generateFile("ISSUE_TEMPLATE.md", "TEMPLATE.md")
+	g.generateFile("ISSUE_TEMPLATE.md", "ISSUE_AND_PULL_REQUEST_TEMPLATE.md")
 }
 
 func (g *Generator) GeneratePRTemplate() {
-	g.generateFile("PULL_REQUEST_TEMPLATE.md", "TEMPLATE.md")
+	g.generateFile("PULL_REQUEST_TEMPLATE.md", "ISSUE_AND_PULL_REQUEST_TEMPLATE.md")
 }
 
 func (g *Generator) GenerateContributingTemplate() {
