@@ -1,5 +1,5 @@
-`.github` Directory Generator for Your Repository
-=================================================
+`.github` Directory Generator
+=============================
 [![Build Status](https://travis-ci.org/rhysd/dot-github.svg?branch=master)](https://travis-ci.org/rhysd/dot-github)
 
 GitHub now supports [issue and pull request template](https://github.com/blog/2111-issue-and-pull-request-templates).  This repository provides `dot-github` command to generate the template files automatically for your GitHub repositories.
@@ -9,6 +9,8 @@ GitHub now supports [issue and pull request template](https://github.com/blog/21
 ## Getting Started
 
 ### 1. Installation
+
+`go get` command or [released binaries](https://github.com/rhysd/dot-github/releases) are available.
 
 ```sh
 $ go get github.com/rhysd/dot-github
@@ -36,7 +38,7 @@ $ git add .github
 
 ### 4. Tweak Generated Files
 
-Tweak generated files in `your-repo/.github/*` for your repository-specific information.
+Tweak generated files in `your-repo/.github/*` for your project-specific information.
 
 ## Writing Template File
 
@@ -142,6 +144,7 @@ Please follow issue/PR template.
 - [Setting guidelines for repository contributors](https://help.github.com/articles/setting-guidelines-for-repository-contributors/)
 - [Creating an issue template for your repository](https://help.github.com/articles/creating-an-issue-template-for-your-repository/)
 - [Creating a pull request template for your repository](https://help.github.com/articles/creating-a-pull-request-template-for-your-repository/)
+- [Issue と PR のテンプレートジェネレータつくった (Japanese Blog Post)](http://rhysd.hatenablog.com/entry/2016/02/21/233643)
 
 ## License
 
