@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"net/url"
 	"os"
 	"os/exec"
@@ -75,7 +76,7 @@ func RemoteURL(name string) *url.URL {
 	}
 	url, err := url.Parse(strings.TrimSpace(string(out[:])))
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
 
 	return url
@@ -95,7 +96,7 @@ func GitRoot() string {
 	}
 	root, err := filepath.Abs(strings.TrimSpace(string(out[:])))
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
 	return root
 }
@@ -147,7 +148,7 @@ func baseDir() string {
 
 	u, err := user.Current()
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
 
 	return u.HomeDir
@@ -157,10 +158,79 @@ func TemplateDir() string {
 	d := path.Join(baseDir(), ".github")
 	if _, err := os.Stat(d); os.IsNotExist(err) {
 		if err := os.MkdirAll(d, os.ModeDir|0644); err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 	}
 	return d
+}
+
+type Importer struct {
+	templateDir  string
+	dotGithubDir string
+	repo         *Repository
+}
+
+func NewImporter(temp string, repo *Repository) *Importer {
+	dotdir := path.Join(repo.Path, ".github")
+	if _, err := os.Stat(dotdir); os.IsNotExist(err) {
+		if err := os.MkdirAll(dotdir, os.ModeDir|0644); err != nil {
+			panic(err)
+		}
+	}
+	return &Importer{
+		temp,
+		dotdir,
+		repo,
+	}
+}
+
+func (i *Importer) applyTemplate(src_path string, dst_path string) {
+	// XXX: Simply copy file
+	src, err := os.Open(src_path)
+	if err != nil {
+		panic(err)
+	}
+	defer src.Close()
+
+	dst, err := os.Open(dst_path)
+	if err != nil {
+		panic(err)
+	}
+	defer dst.Close()
+
+	if _, err = io.Copy(dst, src); err != nil {
+		panic(err)
+	}
+}
+
+func (i *Importer) importFile(name string, fallback string) {
+	src := path.Join(i.templateDir, name)
+	if _, err := os.Stat(src); os.IsNotExist(err) && len(fallback) != 0 {
+		src = path.Join(i.templateDir, fallback)
+	}
+	if _, err := os.Stat(src); os.IsNotExist(err) {
+		return
+	}
+	dst := path.Join(i.repo.Path, name)
+	i.applyTemplate(src, dst)
+}
+
+func (i *Importer) ImportIssueTemplate() {
+	i.importFile("ISSUE_TEMPLATE.md", "TEMPLATE.md")
+}
+
+func (i *Importer) ImportPRTemplate() {
+	i.importFile("PR_TEMPLATE.md", "TEMPLATE.md")
+}
+
+func (i *Importer) ImportContributingTemplate() {
+	i.importFile("CONTRIBUTING.md", "")
+}
+
+func (i *Importer) ImportAllTemplates() {
+	i.ImportIssueTemplate()
+	i.ImportPRTemplate()
+	i.ImportContributingTemplate()
 }
 
 func main() {
@@ -171,7 +241,10 @@ func main() {
 		exitWithVersion()
 	}
 
+	importer := NewImporter(
+		TemplateDir(),
+		NewRepositoryFromURL(RemoteURL("origin")),
+	)
 	// TODO
-	fmt.Println(NewRepositoryFromURL(RemoteURL("origin")))
-	fmt.Println(TemplateDir())
+	fmt.Println(importer)
 }
