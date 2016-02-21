@@ -6,13 +6,16 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"os/user"
+	"path"
+	"path/filepath"
 	"strings"
 )
 
 func exitWithUsage() {
 	fmt.Fprintln(
 		os.Stderr,
-		`$ dot-github [flags] [{dir}]
+		`$ dot-github [flags]
 
   A CLI tool to generate GitHub files such as CONTRIBUTING.md,
   ISSUE_TEMPLATE.md and PULLfrom template file.
@@ -64,11 +67,11 @@ func gitCmdPath() string {
 	return path
 }
 
-func originURL() *url.URL {
-	cmd := exec.Command(gitCmdPath(), "ls-remote", "--get-url", "origin")
+func RemoteURL(name string) *url.URL {
+	cmd := exec.Command(gitCmdPath(), "ls-remote", "--get-url", name)
 	out, err := cmd.Output()
 	if err != nil {
-		panic("'git ls-remote --git-url origin' failed: " + err.Error())
+		panic("Remote '" + name + "' was not found")
 	}
 	url, err := url.Parse(strings.TrimSpace(string(out[:])))
 	if err != nil {
@@ -79,8 +82,22 @@ func originURL() *url.URL {
 }
 
 type Repository struct {
-	user string
-	name string
+	User string
+	Name string
+	Path string
+}
+
+func GitRoot() string {
+	cmd := exec.Command(gitCmdPath(), "rev-parse", "--show-cdup")
+	out, err := cmd.Output()
+	if err != nil {
+		panic("Current directory is not in git repository")
+	}
+	root, err := filepath.Abs(strings.TrimSpace(string(out[:])))
+	if err != nil {
+		panic(err.Error())
+	}
+	return root
 }
 
 func NewRepositoryFromHttpsURL(u *url.URL) *Repository {
@@ -92,6 +109,7 @@ func NewRepositoryFromHttpsURL(u *url.URL) *Repository {
 	return &Repository{
 		split[0],
 		strings.TrimSuffix(split[1], ".git"),
+		GitRoot(),
 	}
 }
 
@@ -108,6 +126,7 @@ func NewRepositoryFromGitURL(u *url.URL) *Repository {
 	return &Repository{
 		split[0],
 		strings.TrimSuffix(split[1], ".git"),
+		GitRoot(),
 	}
 }
 
@@ -153,5 +172,6 @@ func main() {
 	}
 
 	// TODO
-	fmt.Println(NewRepositoryFromURL(originURL()))
+	fmt.Println(NewRepositoryFromURL(RemoteURL("origin")))
+	fmt.Println(TemplateDir())
 }
