@@ -22,7 +22,7 @@ $ $EDITOR CONTRIBUTING.md
 
 Please read below instruction detail about template file
 
-**Note: ** You can change the home directory for `dot-github` by `$DOT_GITHUB_HOME` environment variable.
+**Note:** You can change the home directory for `dot-github` by `$DOT_GITHUB_HOME` environment variable.
 
 ### 3. Generate `.github`
 
@@ -49,15 +49,17 @@ You can see [example direcotry in this repository](exapmle/) for real world exam
 | `$DOT_GITHUB_HOME/.github/ISSUE_AND_PULL_REQUEST_TEMPLATE.md` | If above files are not found, this file is used for template of issues and pull requests. |
 | `$DOT_GITHUB_HOME/.github/CONTRIBUTING.md`                    | Template for contributing guideline.                                                      |
 
+Note that `$DOT_GITHUB_HOME` is an environment variable.  You can specify your favorite directory to put template files.  Default directory for it is `~`.
+
 Above template files are parsed as [Golang's standard text template](https://golang.org/pkg/text/template/).  Below variables are available in template.  They are useful to write flexible and common template files for each repositories.
 
-| Variable Name     | Type     | Description                               |
-| ----------------- | -------- | ----------------------------------------- |
-| `.IsIssue`        |*boolean* | True when used for issue template.        |
-| `.IsPullRequest`  |*boolean* | True when used for pull request template. |
-| `.IsContributing` |*boolean* | True when used for contributing template. |
-| `.RepoName`       |*string*  | Repository name.                          |
-| `.RepoUser`       |*string*  | Repository owner name.                    |
+| Variable Name     | Type      | Description                               |
+| ----------------- | --------- | ----------------------------------------- |
+| `.IsIssue`        | *boolean* | True when used for issue template.        |
+| `.IsPullRequest`  | *boolean* | True when used for pull request template. |
+| `.IsContributing` | *boolean* | True when used for contributing template. |
+| `.RepoName`       | *string*  | Repository name.                          |
+| `.RepoUser`       | *string*  | Repository owner name.                    |
 
 ## Template Examples
 
