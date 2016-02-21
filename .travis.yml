@@ -1,4 +1,4 @@
 language: go
 script:
   - go build
-  - go test
+  - go test -v
