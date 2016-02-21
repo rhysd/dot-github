@@ -15,7 +15,7 @@ type Generator struct {
 func NewGenerator(temp string, repo *Repository) *Generator {
 	dotdir := path.Join(repo.Path, ".github")
 	if _, err := os.Stat(dotdir); os.IsNotExist(err) {
-		if err := os.MkdirAll(dotdir, os.ModeDir|0644); err != nil {
+		if err := os.MkdirAll(dotdir, os.ModeDir|os.ModePerm); err != nil {
 			panic(err)
 		}
 	}
@@ -64,7 +64,7 @@ func (g *Generator) GenerateIssueTemplate() {
 }
 
 func (g *Generator) GeneratePRTemplate() {
-	g.generateFile("PR_TEMPLATE.md", "TEMPLATE.md")
+	g.generateFile("PULL_REQUEST_TEMPLATE.md", "TEMPLATE.md")
 }
 
 func (g *Generator) GenerateContributingTemplate() {

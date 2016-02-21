@@ -23,7 +23,7 @@ func baseDir() string {
 func TemplateDir() string {
 	d := path.Join(baseDir(), ".github")
 	if _, err := os.Stat(d); os.IsNotExist(err) {
-		if err := os.MkdirAll(d, os.ModeDir|0644); err != nil {
+		if err := os.MkdirAll(d, os.ModeDir|os.ModePerm); err != nil {
 			panic(err)
 		}
 	}

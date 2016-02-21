@@ -12,8 +12,8 @@ func ExitWithUsage() {
 		`Usage: dot-github [flags]
 
   A CLI tool to generate GitHub files such as CONTRIBUTING.md,
-  ISSUE_TEMPLATE.md and PR_TEMPLATE.md from template files in ~/.github
-  directory.
+  ISSUE_TEMPLATE.md and PULL_REQUEST_TEMPLATE.md from template files in
+  '~/.github' directory.
   You can control which template should be used and it attempts to generate
   all by default.
 
@@ -50,7 +50,7 @@ func ParseCmdArgs() *Flags {
 	flag.BoolVar(&help, "help", false, "Show this help")
 	flag.BoolVar(&version, "version", false, "Show version")
 	flag.BoolVar(&issue, "issue", false, "Import ISSUE_TEMPLATE.md only")
-	flag.BoolVar(&pr, "pr", false, "Import PR_TEMPLATE.md only")
+	flag.BoolVar(&pr, "pullrequest", false, "Import PULL_REQUEST_TEMPLATE.md only")
 	flag.BoolVar(&contributing, "contributing", false, "Import CONTRIBUTING.md only")
 	flag.Parse()
 
