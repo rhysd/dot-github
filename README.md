@@ -53,6 +53,8 @@ Above template files are parsed as [Golang's standard text template](https://gol
 
 ## Template Examples
 
+### Template files
+
 - `~/.github/ISSUE_AND_PULL_REQUEST_TEMPLATE.md`
 
 ```
@@ -84,6 +86,8 @@ Thank you for contributing {{.RepoName}}!
 
 Please follow issue/PR template.
 ```
+
+### Generated Files
 
 - `/path/to/your-repo/.github/ISSUE_TEMPLATE.md`
 
