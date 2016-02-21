@@ -5,6 +5,8 @@ import (
 	"io"
 	"os"
 	"path"
+	"strings"
+	"text/template"
 )
 
 type Generator struct {
@@ -27,7 +29,40 @@ func NewGenerator(temp string, repo *Repository) *Generator {
 	}
 }
 
+type Placeholders struct {
+	IsPullRequest  bool
+	IsIssue        bool
+	IsContributing bool
+	RepoUser       string
+	RepoName       string
+}
+
 func (g *Generator) applyTemplate(src_path string, dst_path string) {
+	dst, err := os.Create(dst_path)
+	if err != nil {
+		panic(err)
+	}
+	defer dst.Close()
+
+	tmpl, err := template.ParseFiles(src_path)
+	if err != nil {
+		panic(err)
+	}
+
+	holders := Placeholders{
+		strings.Contains(dst_path, "PULL_REQUEST_TEMPLATE.md"),
+		strings.Contains(dst_path, "ISSUE_TEMPLATE.md"),
+		strings.Contains(dst_path, "CONTRIBUTING.md"),
+		g.repo.User,
+		g.repo.Name,
+	}
+
+	if err := tmpl.Execute(dst, holders); err != nil {
+		panic(err)
+	}
+}
+
+func (g *Generator) applyTemplateOld(src_path string, dst_path string) {
 	// XXX: Simply copy file
 	src, err := os.Open(src_path)
 	if err != nil {

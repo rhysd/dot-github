@@ -25,12 +25,20 @@ func ExitWithUsage() {
     $DOT_GITHUB_HOME/.github/PULL_REQUEST_TEMPLATE.md
     $DOT_GITHUB_HOME/.github/CONTRIBUTING.md
 
+  You can use Golang's standard template for the template files.
+  Below variables are available by default.
+
+    .IsIssue        : (boolean) true when used for issue template
+    .IsPullRequest  : (boolean) true when used for pull request template
+    .IsContributing : (boolean) true when used for contributing template
+    .RepoName       : (string) repository name
+    .RepoUser       : (string) repository owner name
 
 References:
 
-  GitHub Blog: https://github.com/blog/2111-issue-and-pull-request-templates
-  More usage:  https://github.com/rhysd/dot-github#readme
-
+  GitHub Blog:     https://github.com/blog/2111-issue-and-pull-request-templates
+  More usage:      https://github.com/rhysd/dot-github#readme
+  Golang template: https://golang.org/pkg/text/template/
 
 Flags:`)
 	flag.PrintDefaults()
