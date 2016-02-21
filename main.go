@@ -14,11 +14,14 @@ func main() {
 	)
 	if flags.IssueOnly {
 		g.GenerateIssueTemplate()
-	} else if flags.PROnly {
+	}
+	if flags.PROnly {
 		g.GeneratePRTemplate()
-	} else if flags.ContributingOnly {
+	}
+	if flags.ContributingOnly {
 		g.GenerateContributingTemplate()
-	} else {
+	}
+	if !flags.IssueOnly && !flags.PROnly && !flags.ContributingOnly {
 		g.GenerateAllTemplates()
 	}
 }
