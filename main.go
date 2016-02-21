@@ -179,27 +179,27 @@ func TemplateDir() string {
 	return d
 }
 
-type Importer struct {
+type Generator struct {
 	templateDir  string
 	dotGithubDir string
 	repo         *Repository
 }
 
-func NewImporter(temp string, repo *Repository) *Importer {
+func NewGenerator(temp string, repo *Repository) *Generator {
 	dotdir := path.Join(repo.Path, ".github")
 	if _, err := os.Stat(dotdir); os.IsNotExist(err) {
 		if err := os.MkdirAll(dotdir, os.ModeDir|0644); err != nil {
 			panic(err)
 		}
 	}
-	return &Importer{
+	return &Generator{
 		temp,
 		dotdir,
 		repo,
 	}
 }
 
-func (i *Importer) applyTemplate(src_path string, dst_path string) {
+func (g *Generator) applyTemplate(src_path string, dst_path string) {
 	// XXX: Simply copy file
 	src, err := os.Open(src_path)
 	if err != nil {
@@ -218,36 +218,36 @@ func (i *Importer) applyTemplate(src_path string, dst_path string) {
 	}
 }
 
-func (i *Importer) importFile(name string, fallback string) {
-	src := path.Join(i.templateDir, name)
+func (g *Generator) generateFile(name string, fallback string) {
+	src := path.Join(g.templateDir, name)
 	if len(fallback) != 0 {
 		if _, err := os.Stat(src); os.IsNotExist(err) {
-			src = path.Join(i.templateDir, fallback)
+			src = path.Join(g.templateDir, fallback)
 		}
 	}
 	if _, err := os.Stat(src); os.IsNotExist(err) {
 		return
 	}
-	dst := path.Join(i.repo.Path, name)
-	i.applyTemplate(src, dst)
+	dst := path.Join(g.repo.Path, name)
+	g.applyTemplate(src, dst)
 }
 
-func (i *Importer) ImportIssueTemplate() {
-	i.importFile("ISSUE_TEMPLATE.md", "TEMPLATE.md")
+func (g *Generator) GenerateIssueTemplate() {
+	g.generateFile("ISSUE_TEMPLATE.md", "TEMPLATE.md")
 }
 
-func (i *Importer) ImportPRTemplate() {
-	i.importFile("PR_TEMPLATE.md", "TEMPLATE.md")
+func (g *Generator) GeneratePRTemplate() {
+	g.generateFile("PR_TEMPLATE.md", "TEMPLATE.md")
 }
 
-func (i *Importer) ImportContributingTemplate() {
-	i.importFile("CONTRIBUTING.md", "")
+func (g *Generator) GenerateContributingTemplate() {
+	g.generateFile("CONTRIBUTING.md", "")
 }
 
-func (i *Importer) ImportAllTemplates() {
-	i.ImportIssueTemplate()
-	i.ImportPRTemplate()
-	i.ImportContributingTemplate()
+func (g *Generator) GenerateAllTemplates() {
+	g.GenerateIssueTemplate()
+	g.GeneratePRTemplate()
+	g.GenerateContributingTemplate()
 }
 
 func main() {
@@ -258,17 +258,17 @@ func main() {
 		exitWithVersion()
 	}
 
-	i := NewImporter(
+	g := NewGenerator(
 		TemplateDir(),
 		NewRepositoryFromURL(RemoteURL("origin")),
 	)
 	if flags.IssueOnly {
-		i.ImportIssueTemplate()
+		g.GenerateIssueTemplate()
 	} else if flags.PROnly {
-		i.ImportPRTemplate()
+		g.GeneratePRTemplate()
 	} else if flags.ContributingOnly {
-		i.ImportContributingTemplate()
+		g.GenerateContributingTemplate()
 	} else {
-		i.ImportAllTemplates()
+		g.GenerateAllTemplates()
 	}
 }
