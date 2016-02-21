@@ -16,7 +16,7 @@ $ go get github.com/rhysd/dot-github
 
 ```sh
 $ mkdir -p ~/.github && cd ~/.github
-$ $EDITOR ISSUE_AND_PULL_REQUEST.md
+$ $EDITOR ISSUE_AND_PULL_REQUEST_TEMPLATE.md
 $ $EDITOR CONTRIBUTING.md
 ```
 
