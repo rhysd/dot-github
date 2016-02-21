@@ -32,24 +32,32 @@ $ dot-github
 $ git add .github
 ```
 
+### 4. Tweak Generated Files
+
+Tweak generated files in `your-repo/.github/*` for your repository-specific information.
+
 ## Writing Template File
 
 You can see [example direcotry in this repository](exapmle/) for real world examples.
 
 `dot-github` looks below template files
 
-- `$DOT_GITHUB_HOME/.github/ISSUE_TEMPLATE.md`
-- `$DOT_GITHUB_HOME/.github/PULL_REQUEST_TEMPLATE.md`
-- `$DOT_GITHUB_HOME/.github/ISSUE_AND_PULL_REQUEST_TEMPLATE.md` is looked for issue and pull request templates (`ISSUE_TEMPLATE.md` and `PULL_REQUEST_TEMPLATE.dm` have higher priority).
-- `$DOT_GITHUB_HOME/.github/CONTRIBUTING.md` is looked for contributing guideline template.
+| File Path                                                     | Description                                                                               |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `$DOT_GITHUB_HOME/.github/ISSUE_TEMPLATE.md`                  | Template for issues.                                                                      |
+| `$DOT_GITHUB_HOME/.github/PULL_REQUEST_TEMPLATE.md`           | Template for pull requests.                                                               |
+| `$DOT_GITHUB_HOME/.github/ISSUE_AND_PULL_REQUEST_TEMPLATE.md` | If above files are not found, this file is used for template of issues and pull requests. |
+| `$DOT_GITHUB_HOME/.github/CONTRIBUTING.md`                    | Template for contributing guideline.                                                      |
 
-Above template files are parsed as [Golang's standard text template](https://golang.org/pkg/text/template/).  Below variables are available in template.
+Above template files are parsed as [Golang's standard text template](https://golang.org/pkg/text/template/).  Below variables are available in template.  They are useful to write flexible and common template files for each repositories.
 
-- `.IsIssue`: *(boolean)* True when used for issue template
-- `.IsPullRequest`: *(boolean)* True when used for pull request template
-- `.IsContributing`: *(boolean)* True when used for contributing template
-- `.RepoName`: *(string)* Repository name
-- `.RepoUser`: *(string)* Repository owner name
+| Variable Name     | Type     | Description                               |
+| ----------------- | -------- | ----------------------------------------- |
+| `.IsIssue`        |*boolean* | True when used for issue template.        |
+| `.IsPullRequest`  |*boolean* | True when used for pull request template. |
+| `.IsContributing` |*boolean* | True when used for contributing template. |
+| `.RepoName`       |*string*  | Repository name.                          |
+| `.RepoUser`       |*string*  | Repository owner name.                    |
 
 ## Template Examples
 
@@ -124,6 +132,12 @@ Thank you for contributing my-project!
 
 Please follow issue/PR template.
 ```
+
+## References
+
+- [Setting guidelines for repository contributors](https://help.github.com/articles/setting-guidelines-for-repository-contributors/)
+- [Creating an issue template for your repository](https://help.github.com/articles/creating-an-issue-template-for-your-repository/)
+- [Creating a pull request template for your repository](https://help.github.com/articles/creating-a-pull-request-template-for-your-repository/)
 
 ## License
 
