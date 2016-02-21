@@ -46,7 +46,7 @@ Flags:`)
 }
 
 func ExitWithVersion() {
-	fmt.Println("1.0.0")
+	fmt.Println("1.0.1")
 	os.Exit(0)
 }
 

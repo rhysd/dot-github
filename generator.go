@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"path"
 	"strings"
@@ -58,25 +57,6 @@ func (g *Generator) applyTemplate(src_path string, dst_path string) {
 	}
 
 	if err := tmpl.Execute(dst, holders); err != nil {
-		panic(err)
-	}
-}
-
-func (g *Generator) applyTemplateOld(src_path string, dst_path string) {
-	// XXX: Simply copy file
-	src, err := os.Open(src_path)
-	if err != nil {
-		panic(err)
-	}
-	defer src.Close()
-
-	dst, err := os.Create(dst_path)
-	if err != nil {
-		panic(err)
-	}
-	defer dst.Close()
-
-	if _, err = io.Copy(dst, src); err != nil {
 		panic(err)
 	}
 

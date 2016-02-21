@@ -4,6 +4,8 @@
 
 GitHub now supports [issue and pull request template](https://github.com/blog/2111-issue-and-pull-request-templates).  This repository provides `dot-github` command to generate the template files automatically for your GitHub repositories.
 
+![screenshot](https://raw.githubusercontent.com/rhysd/ss/master/dot-github/main.gif)
+
 ## Getting Started
 
 ### 1. Installation
