@@ -16,10 +16,13 @@ import (
 func exitWithUsage() {
 	fmt.Fprintln(
 		os.Stderr,
-		`$ dot-github [flags]
+		`Usage: dot-github [flags]
 
   A CLI tool to generate GitHub files such as CONTRIBUTING.md,
-  ISSUE_TEMPLATE.md and PULLfrom template file.
+  ISSUE_TEMPLATE.md and PR_TEMPLATE.md from template files in ~/.github
+  directory.
+  You can control which template should be used and it attempts to generate
+  all by default.
 
   GitHub Blog: https://github.com/blog/2111-issue-and-pull-request-templates
   More usage:  https://github.com/rhysd/dot-github#readme
@@ -35,23 +38,35 @@ func exitWithVersion() {
 }
 
 type Flags struct {
-	Help    bool
-	Version bool
+	Help             bool
+	Version          bool
+	IssueOnly        bool
+	PROnly           bool
+	ContributingOnly bool
 }
 
 func parseCmdArgs() *Flags {
 	var (
-		help    bool
-		version bool
+		help         bool
+		version      bool
+		issue        bool
+		pr           bool
+		contributing bool
 	)
 
 	flag.BoolVar(&help, "help", false, "Show this help")
 	flag.BoolVar(&version, "version", false, "Show version")
+	flag.BoolVar(&issue, "issue", false, "Import ISSUE_TEMPLATE.md only")
+	flag.BoolVar(&pr, "pr", false, "Import PR_TEMPLATE.md only")
+	flag.BoolVar(&contributing, "contributing", false, "Import CONTRIBUTING.md only")
 	flag.Parse()
 
 	return &Flags{
 		help,
 		version,
+		issue,
+		pr,
+		contributing,
 	}
 }
 
@@ -205,8 +220,10 @@ func (i *Importer) applyTemplate(src_path string, dst_path string) {
 
 func (i *Importer) importFile(name string, fallback string) {
 	src := path.Join(i.templateDir, name)
-	if _, err := os.Stat(src); os.IsNotExist(err) && len(fallback) != 0 {
-		src = path.Join(i.templateDir, fallback)
+	if len(fallback) != 0 {
+		if _, err := os.Stat(src); os.IsNotExist(err) {
+			src = path.Join(i.templateDir, fallback)
+		}
 	}
 	if _, err := os.Stat(src); os.IsNotExist(err) {
 		return
@@ -241,10 +258,17 @@ func main() {
 		exitWithVersion()
 	}
 
-	importer := NewImporter(
+	i := NewImporter(
 		TemplateDir(),
 		NewRepositoryFromURL(RemoteURL("origin")),
 	)
-	// TODO
-	fmt.Println(importer)
+	if flags.IssueOnly {
+		i.ImportIssueTemplate()
+	} else if flags.PROnly {
+		i.ImportPRTemplate()
+	} else if flags.ContributingOnly {
+		i.ImportContributingTemplate()
+	} else {
+		i.ImportAllTemplates()
+	}
 }
