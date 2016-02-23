@@ -9,24 +9,33 @@ import (
 )
 
 func gitCmdPath() string {
-	specified := os.Getenv("DOT_GITHUB_GIT_CMD")
-	if len(specified) != 0 {
-		return specified
+	cmd := os.Getenv("DOT_GITHUB_GIT_CMD")
+	if len(cmd) == 0 {
+		cmd = "git" // Default
 	}
 
-	path, err := exec.LookPath("git")
+	path, err := exec.LookPath(cmd)
 	if err != nil {
-		panic("'git' command not found.  Consider to specify $DOT_GITHUB_GIT_CMD manually.")
+		panic("'" + cmd + "' command not found.  Specify $DOT_GITHUB_GIT_CMD properly.")
 	}
 	return path
 }
+
+func validateURL(u string) bool {
+	return strings.HasPrefix(u, "https") || strings.HasPrefix(u, "http") || strings.HasPrefix(u, "git@")
+}
+
 func RemoteURL(name string) *url.URL {
 	cmd := exec.Command(gitCmdPath(), "ls-remote", "--get-url", name)
 	out, err := cmd.Output()
 	if err != nil {
-		panic("Remote '" + name + "' was not found")
+		panic(err)
 	}
-	url, err := url.Parse(strings.TrimSpace(string(out[:])))
+	u := string(out[:])
+	if !validateURL(u) {
+		panic("Invalid remote: " + name)
+	}
+	url, err := url.Parse(strings.TrimSpace(u))
 	if err != nil {
 		panic(err)
 	}
