@@ -51,6 +51,7 @@ Flags:`
 
 func (p *Parsed) ShowUsage(out io.Writer) {
 	fmt.Fprintln(out, Usage)
+	p.flags.SetOutput(out)
 	p.flags.PrintDefaults()
 }
 
