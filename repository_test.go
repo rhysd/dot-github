@@ -33,3 +33,33 @@ func TestGitURL(t *testing.T) {
 		t.Fatalf("Repository root must end with its name: %v", r.Path)
 	}
 }
+
+func TestInvalidPath(t *testing.T) {
+	u, _ := url.Parse("https://github.com")
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("URL without path must cause panic")
+		}
+	}()
+	NewRepositoryFromURL(u)
+}
+
+func TestInvalidGitURL(t *testing.T) {
+	u, _ := url.Parse("invalid-blah")
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Invalid URL must cause panic")
+		}
+	}()
+	NewRepositoryFromURL(u)
+}
+
+func TestInvalidURLScheme(t *testing.T) {
+	u, _ := url.Parse("file://blah.jp")
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Invalid Scheme must cause panic")
+		}
+	}()
+	NewRepositoryFromURL(u)
+}
