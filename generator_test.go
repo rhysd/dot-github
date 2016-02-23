@@ -58,6 +58,18 @@ func TestDotGithubDir(t *testing.T) {
 	}
 }
 
+func TestInvalidRepositoryPath(t *testing.T) {
+	u, _ := url.Parse("https://github.com/rhysd/dot-github.git")
+	r := NewRepositoryFromURL(u)
+	r.Path = "/"
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Invalid repository path must cause panic")
+		}
+	}()
+	NewGenerator(TemplateDir(), r)
+}
+
 func TestGeneratingAllTemplates(t *testing.T) {
 	d := "test-generate-all-templates"
 	createAndChdirTo(d, "### This is test for {{.RepoUser}}/{{.RepoName}}\n{{if .IsPullRequest}}pull request!{{else if .IsIssue}}issue!{{else if .IsContributing}}contributing!{{end}}", "This is contributing guide for {{.RepoUser}}/{{.RepoName}}")
