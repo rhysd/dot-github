@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 func main() {
 	flags := ParseCmdArgs()
 	if flags.Help {
@@ -23,5 +27,8 @@ func main() {
 	}
 	if !flags.IssueOnly && !flags.PROnly && !flags.ContributingOnly {
 		g.GenerateAllTemplates()
+	}
+	if !g.fileCreated {
+		fmt.Println("No file created. Add template files to " + g.templateDir)
 	}
 }

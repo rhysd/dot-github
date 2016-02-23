@@ -12,6 +12,7 @@ type Generator struct {
 	templateDir  string
 	dotGithubDir string
 	repo         *Repository
+	fileCreated  bool
 }
 
 func NewGenerator(temp string, repo *Repository) *Generator {
@@ -25,6 +26,7 @@ func NewGenerator(temp string, repo *Repository) *Generator {
 		temp,
 		dotdir,
 		repo,
+		false,
 	}
 }
 
@@ -75,6 +77,7 @@ func (g *Generator) generateFile(name string, fallback string) {
 	}
 	dst := path.Join(g.dotGithubDir, name)
 	g.applyTemplate(src, dst)
+	g.fileCreated = true
 }
 
 func (g *Generator) GenerateIssueTemplate() {
