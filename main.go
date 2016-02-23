@@ -34,7 +34,7 @@ func main() {
 	if !parsed.IssueOnly && !parsed.PROnly && !parsed.ContributingOnly {
 		g.GenerateAllTemplates()
 	}
-	if !g.fileCreated {
+	if !g.FileCreated {
 		fmt.Println("No file created. Add template files to " + g.templateDir)
 	}
 }

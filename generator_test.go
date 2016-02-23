@@ -9,36 +9,45 @@ import (
 	"testing"
 )
 
-// Create fixtures
-func setup() {
-	if err := os.MkdirAll(path.Join("dir-for-test", ".github"), os.ModeDir|os.ModePerm); err != nil {
+func createAndChdirTo(dir string, issue_and_pr string, contributing string) {
+	if err := os.MkdirAll(path.Join(dir, ".github"), os.ModeDir|os.ModePerm); err != nil {
 		panic("Failed to make directory for testing")
 	}
-	if err := os.MkdirAll(path.Join("dir-for-test", "repo"), os.ModeDir|os.ModePerm); err != nil {
+	if err := os.MkdirAll(path.Join(dir, "repo"), os.ModeDir|os.ModePerm); err != nil {
 		panic("Failed to make repo directory for testing")
 	}
-	os.Chdir("dir-for-test")
+	os.Chdir(dir)
 
 	f1, err := os.Create(".github/ISSUE_AND_PULL_REQUEST_TEMPLATE.md")
 	if err != nil {
 		panic("Failed to make template file for issue and pull request")
 	}
 	defer f1.Close()
-	f1.WriteString("### This is test for {{.RepoUser}}/{{.RepoName}}\n{{if .IsPullRequest}}pull request!{{else if .IsIssue}}issue!{{else if .IsContributing}}contributing!{{end}}")
+	f1.WriteString(issue_and_pr)
 
 	f2, err := os.Create(path.Join(".github", "CONTRIBUTING.md"))
 	if err != nil {
 		panic("Failed to make template file for contributing")
 	}
 	defer f2.Close()
-	f2.WriteString("This is contributing guide for {{.RepoUser}}/{{.RepoName}}")
+	f2.WriteString(contributing)
 }
 
-func teardown() {
+func chdirBackAndSweep(dir string) {
 	os.Chdir("..")
-	if err := os.RemoveAll("dir-for-test"); err != nil {
+	if err := os.RemoveAll(dir); err != nil {
 		panic(err)
 	}
+}
+
+func newGeneratorForTest(workdir string) *Generator {
+	u, err := url.Parse("https://github.com/rhysd/dot-github.git")
+	if err != nil {
+		panic(err)
+	}
+	r := NewRepositoryFromURL(u)
+	r.Path = path.Join(workdir, "repo")
+	return NewGenerator(path.Join(workdir, ".github"), r)
 }
 
 func TestDotGithubDir(t *testing.T) {
@@ -49,12 +58,13 @@ func TestDotGithubDir(t *testing.T) {
 	}
 }
 
-func TestGeneratingFile(t *testing.T) {
-	u, _ := url.Parse("https://github.com/rhysd/dot-github.git")
-	r := NewRepositoryFromURL(u)
+func TestGeneratingAllTemplates(t *testing.T) {
+	d := "test-generate-all-templates"
+	createAndChdirTo(d, "### This is test for {{.RepoUser}}/{{.RepoName}}\n{{if .IsPullRequest}}pull request!{{else if .IsIssue}}issue!{{else if .IsContributing}}contributing!{{end}}", "This is contributing guide for {{.RepoUser}}/{{.RepoName}}")
+	defer chdirBackAndSweep(d)
+
 	w, _ := os.Getwd()
-	r.Path = path.Join(w, "repo")
-	g := NewGenerator(path.Join(w, ".github"), r)
+	g := newGeneratorForTest(w)
 	g.GenerateAllTemplates()
 
 	var (
@@ -69,7 +79,7 @@ func TestGeneratingFile(t *testing.T) {
 	}
 	content = string(bytes[:])
 	if content != "### This is test for rhysd/dot-github\nissue!" {
-		t.Fatalf("ISSUE_TEMPLATE.md is invalid: %v", content)
+		t.Errorf("ISSUE_TEMPLATE.md is invalid: %v", content)
 	}
 
 	bytes, err = ioutil.ReadFile(path.Join(w, "repo", ".github", "PULL_REQUEST_TEMPLATE.md"))
@@ -78,7 +88,7 @@ func TestGeneratingFile(t *testing.T) {
 	}
 	content = string(bytes[:])
 	if content != "### This is test for rhysd/dot-github\npull request!" {
-		t.Fatalf("PULL_REQUEST_TEMPLATE.md is invalid: %v", content)
+		t.Errorf("PULL_REQUEST_TEMPLATE.md is invalid: %v", content)
 	}
 
 	bytes, err = ioutil.ReadFile(path.Join(w, "repo", ".github", "CONTRIBUTING.md"))
@@ -87,13 +97,44 @@ func TestGeneratingFile(t *testing.T) {
 	}
 	content = string(bytes[:])
 	if content != "This is contributing guide for rhysd/dot-github" {
-		t.Fatalf("CONTRIBUTING.md is invalid: %v", content)
+		t.Errorf("CONTRIBUTING.md is invalid: %v", content)
+	}
+
+	if !g.FileCreated {
+		t.Errorf("FileCreated flag was not set")
 	}
 }
 
-func TestMain(m *testing.M) {
-	setup()
-	c := m.Run()
-	teardown()
-	os.Exit(c)
+func TestIgnoreNotExsistingTemplates(t *testing.T) {
+	d := "test-not-existing"
+	createAndChdirTo(d, "### This is test for {{.RepoUser}}/{{.RepoName}}\n{{if .IsPullRequest}}pull request!{{else if .IsIssue}}issue!{{else if .IsContributing}}contributing!{{end}}", "This is contributing guide for {{.RepoUser}}/{{.RepoName}}")
+	defer chdirBackAndSweep(d)
+
+	w, _ := os.Getwd()
+	g := newGeneratorForTest(w)
+
+	g.templateDir = path.Join(w, "unknown", ".github")
+
+	// Template dir does not exist so it generates nothing
+	g.GenerateAllTemplates()
+
+	if g.FileCreated {
+		t.Errorf("File is generated although template dir does not exist")
+	}
+}
+
+func TestFailToParseTemplate(t *testing.T) {
+	d := "test-not-existing"
+	createAndChdirTo(d, "This causes error: {{", "")
+	defer chdirBackAndSweep(d)
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Parse error did not occur")
+		}
+	}()
+
+	w, _ := os.Getwd()
+	g := newGeneratorForTest(w)
+	g.GenerateIssueTemplate()
 }
