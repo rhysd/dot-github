@@ -7,17 +7,15 @@ import (
 )
 
 func baseDir() string {
-	env := os.Getenv("DOT_GITHUB_HOME")
-	if len(env) != 0 {
-		return env
+	dir := os.Getenv("DOT_GITHUB_HOME")
+	if len(dir) == 0 {
+		u, err := user.Current()
+		if err != nil {
+			panic(err)
+		}
+		dir = u.HomeDir
 	}
-
-	u, err := user.Current()
-	if err != nil {
-		panic(err)
-	}
-
-	return u.HomeDir
+	return dir
 }
 
 func TemplateDir() string {
