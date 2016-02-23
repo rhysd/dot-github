@@ -9,18 +9,22 @@ func TestFlags(t *testing.T) {
 	os.Args = []string{"dot-github", "-issue", "-help", "-version", "-pullrequest", "-contributing"}
 	f := ParseCmdArgs()
 	if !f.IssueOnly {
-		t.Fatalf("-issue must be looked")
+		t.Errorf("-issue must be looked")
 	}
 	if !f.Help {
-		t.Fatalf("-help must be looked")
+		t.Errorf("-help must be looked")
 	}
 	if !f.PROnly {
-		t.Fatalf("-pullrequest must be looked")
+		t.Errorf("-pullrequest must be looked")
 	}
 	if !f.ContributingOnly {
-		t.Fatalf("-contributing must be looked")
+		t.Errorf("-contributing must be looked")
 	}
 	if !f.Version {
-		t.Fatalf("-version must be looked")
+		t.Errorf("-version must be looked")
 	}
+}
+
+func TestExtWithUsage(t *testing.T) {
+
 }

@@ -2,30 +2,36 @@ package main
 
 import (
 	"fmt"
+	"os"
 )
 
 func main() {
-	flags := ParseCmdArgs()
-	if flags.Help {
-		ExitWithUsage()
-	} else if flags.Version {
-		ExitWithVersion()
+	parsed, err := ParseCmdArgs(os.Stderr)
+	if err != nil {
+		os.Exit(1)
+	}
+	if parsed.Help {
+		parsed.ShowUsage(os.Stderr)
+		os.Exit(0)
+	} else if parsed.Version {
+		parsed.ShowVersion(os.Stdout)
+		os.Exit(0)
 	}
 
 	g := NewGenerator(
 		TemplateDir(),
 		NewRepositoryFromURL(RemoteURL("origin")),
 	)
-	if flags.IssueOnly {
+	if parsed.IssueOnly {
 		g.GenerateIssueTemplate()
 	}
-	if flags.PROnly {
+	if parsed.PROnly {
 		g.GeneratePRTemplate()
 	}
-	if flags.ContributingOnly {
+	if parsed.ContributingOnly {
 		g.GenerateContributingTemplate()
 	}
-	if !flags.IssueOnly && !flags.PROnly && !flags.ContributingOnly {
+	if !parsed.IssueOnly && !parsed.PROnly && !parsed.ContributingOnly {
 		g.GenerateAllTemplates()
 	}
 	if !g.fileCreated {

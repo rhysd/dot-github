@@ -3,13 +3,20 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 )
 
-func ExitWithUsage() {
-	fmt.Fprintln(
-		os.Stderr,
-		`Usage: dot-github [flags]
+type Parsed struct {
+	Help             bool
+	Version          bool
+	IssueOnly        bool
+	PROnly           bool
+	ContributingOnly bool
+	flags            *flag.FlagSet
+}
+
+const Usage = `Usage: dot-github [flags]
 
   A CLI tool to generate GitHub files such as CONTRIBUTING.md,
   ISSUE_TEMPLATE.md and PULL_REQUEST_TEMPLATE.md from template files in
@@ -40,25 +47,18 @@ References:
   More usage:      https://github.com/rhysd/dot-github#readme
   Golang template: https://golang.org/pkg/text/template/
 
-Flags:`)
-	flag.PrintDefaults()
-	os.Exit(0)
+Flags:`
+
+func (p *Parsed) ShowUsage(out io.Writer) {
+	fmt.Fprintln(out, Usage)
+	p.flags.PrintDefaults()
 }
 
-func ExitWithVersion() {
-	fmt.Println("1.0.1")
-	os.Exit(0)
+func (p *Parsed) ShowVersion(out io.Writer) {
+	fmt.Fprintln(out, "1.0.1")
 }
 
-type Flags struct {
-	Help             bool
-	Version          bool
-	IssueOnly        bool
-	PROnly           bool
-	ContributingOnly bool
-}
-
-func ParseCmdArgs() *Flags {
+func ParseCmdArgs(err_out io.Writer) (*Parsed, error) {
 	var (
 		help         bool
 		version      bool
@@ -67,18 +67,30 @@ func ParseCmdArgs() *Flags {
 		contributing bool
 	)
 
-	flag.BoolVar(&help, "help", false, "Show this help")
-	flag.BoolVar(&version, "version", false, "Show version")
-	flag.BoolVar(&issue, "issue", false, "Import ISSUE_TEMPLATE.md only")
-	flag.BoolVar(&pr, "pullrequest", false, "Import PULL_REQUEST_TEMPLATE.md only")
-	flag.BoolVar(&contributing, "contributing", false, "Import CONTRIBUTING.md only")
-	flag.Parse()
+	flags := flag.NewFlagSet("dot-github", flag.ContinueOnError)
+	flags.SetOutput(err_out)
 
-	return &Flags{
+	flags.BoolVar(&help, "help", false, "Show this help")
+	flags.BoolVar(&version, "version", false, "Show version")
+	flags.BoolVar(&issue, "issue", false, "Import ISSUE_TEMPLATE.md only")
+	flags.BoolVar(&pr, "pullrequest", false, "Import PULL_REQUEST_TEMPLATE.md only")
+	flags.BoolVar(&contributing, "contributing", false, "Import CONTRIBUTING.md only")
+
+	flags.Usage = func() {
+		fmt.Fprintln(err_out, Usage)
+		flags.PrintDefaults()
+	}
+
+	if err := flags.Parse(os.Args[1:]); err != nil {
+		return nil, err
+	}
+
+	return &Parsed{
 		help,
 		version,
 		issue,
 		pr,
 		contributing,
-	}
+		flags,
+	}, nil
 }
