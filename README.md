@@ -2,7 +2,7 @@
 =============================
 [![Build Status](https://travis-ci.org/rhysd/dot-github.svg?branch=master)](https://travis-ci.org/rhysd/dot-github) [![Coverage Status](https://coveralls.io/repos/github/rhysd/dot-github/badge.svg?branch=master)](https://coveralls.io/github/rhysd/dot-github?branch=master)
 
-GitHub now supports [issue and pull request template](https://github.com/blog/2111-issue-and-pull-request-templates).  This repository provides `dot-github` command to generate the template files automatically for your GitHub repositories.
+GitHub now supports [issue and pull request template](https://github.com/blog/2111-issue-and-pull-request-templates).  This repository provides `dot-github` command to generate the template files automatically for your GitHub repositories.  This also enables to manage template files in dotfiles for all of your machines.
 
 ![screenshot](https://raw.githubusercontent.com/rhysd/ss/master/dot-github/main.gif)
 
@@ -10,10 +10,18 @@ GitHub now supports [issue and pull request template](https://github.com/blog/21
 
 ### 1. Installation
 
-`go get` command or [released binaries](https://github.com/rhysd/dot-github/releases) are available.
+`go get` command
 
 ```sh
 $ go get github.com/rhysd/dot-github
+```
+
+or [released binaries](https://github.com/rhysd/dot-github/releases)
+
+```sh
+cd /path/to/Downloads  # Download binary for your platform
+chmod +x dot-github_your_platform
+mv dot-github_your_platform /usr/local/bin/dot-github
 ```
 
 ### 2. Write Your Template Files
