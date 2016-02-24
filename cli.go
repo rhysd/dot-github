@@ -56,7 +56,7 @@ func (p *Parsed) ShowUsage(out io.Writer) {
 }
 
 func (p *Parsed) ShowVersion(out io.Writer) {
-	fmt.Fprintln(out, "1.0.1")
+	fmt.Fprintln(out, "1.1.0")
 }
 
 func ParseCmdArgs(err_out io.Writer) (*Parsed, error) {
