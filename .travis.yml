@@ -1,13 +1,6 @@
 language: go
-before_install:
-  - go get github.com/axw/gocov/gocov
-  - go get github.com/mattn/goveralls
-  - if ! go get code.google.com/p/go.tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
-  - go version
-  - go env
-install:
-  - go get -t -d -v ./...
+os:
+  - linux
+  - osx
 script:
-  - go build
-  - go test -v -coverprofile=coverage.out
-  - $HOME/gopath/bin/goveralls -coverprofile coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+  - bash ./scripts/travis.sh

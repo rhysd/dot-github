@@ -1,6 +1,9 @@
 `.github` Directory Generator
 =============================
-[![Build Status](https://travis-ci.org/rhysd/dot-github.svg?branch=master)](https://travis-ci.org/rhysd/dot-github) [![Build status](https://ci.appveyor.com/api/projects/status/bjat5jyqmcgjfvwd?svg=true)](https://ci.appveyor.com/project/rhysd/dot-github) [![Coverage Status](https://coveralls.io/repos/github/rhysd/dot-github/badge.svg?branch=master)](https://coveralls.io/github/rhysd/dot-github?branch=master)
+
+| Linux and OS X | Windows | Coverage |
+| -------------- | ------- | -------- |
+| [![Build Status](https://travis-ci.org/rhysd/dot-github.svg?branch=master)](https://travis-ci.org/rhysd/dot-github) | [![Build status](https://ci.appveyor.com/api/projects/status/bjat5jyqmcgjfvwd?svg=true)](https://ci.appveyor.com/project/rhysd/dot-github) | [![Coverage Status](https://coveralls.io/repos/github/rhysd/dot-github/badge.svg?branch=master)](https://coveralls.io/github/rhysd/dot-github?branch=master) |
 
 GitHub now supports [issue and pull request template](https://github.com/blog/2111-issue-and-pull-request-templates).  This repository provides `dot-github` command to generate the template files automatically for your GitHub repositories.  This also enables to manage template files in dotfiles for all of your machines.
 
