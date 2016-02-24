@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 	"os/user"
-	"path"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -55,7 +55,7 @@ func TestGitRoot(t *testing.T) {
 	if len(r) == 0 {
 		t.Fatalf("GitRoot() must return non-empty string")
 	}
-	if !path.IsAbs(r) {
+	if !filepath.IsAbs(r) {
 		t.Fatalf("GitRoot() must return absolute path but actually: %v", r)
 	}
 	if !strings.Contains(r, "dot-github") {

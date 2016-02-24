@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -59,6 +60,9 @@ func TestDotGithubDir(t *testing.T) {
 }
 
 func TestInvalidRepositoryPath(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("because I don't know how to specify 'invalid' directory path on Windows")
+	}
 	u, _ := url.Parse("https://github.com/rhysd/dot-github.git")
 	r := NewRepositoryFromURL(u)
 	r.Path = "/"

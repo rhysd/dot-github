@@ -49,9 +49,15 @@ func GitRoot() string {
 	if err != nil {
 		panic("Current directory is not in git repository")
 	}
-	root, err := filepath.Abs(strings.TrimSpace(string(out[:])))
+	rel := strings.TrimSpace(string(out[:]))
+	if len(rel) == 0 {
+		// Note:
+		// Passing empty string to Abs() causes panic() in Windows
+		rel = "."
+	}
+	root, err := filepath.Abs(rel)
 	if err != nil {
-		panic(err)
+		panic(err.Error() + ": " + strings.TrimSpace(string(out[:])))
 	}
 	return root
 }

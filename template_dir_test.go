@@ -2,7 +2,8 @@ package main
 
 import (
 	"os"
-	"path"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -12,7 +13,7 @@ func TestTemplateDir(t *testing.T) {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		t.Fatalf("'.github' directory for templates must be created")
 	}
-	if !path.IsAbs(dir) {
+	if !filepath.IsAbs(dir) {
 		t.Fatalf("TemplateDir() must return absolute path")
 	}
 	if !strings.Contains(dir, ".github") {
@@ -29,7 +30,7 @@ func TestSpecifiedByEnvVar(t *testing.T) {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		t.Fatalf("'.github' directory for templates must be created")
 	}
-	if !path.IsAbs(dir) {
+	if !filepath.IsAbs(dir) {
 		t.Fatalf("TemplateDir() must return absolute path")
 	}
 	if !strings.Contains(dir, ".github") {
@@ -38,6 +39,9 @@ func TestSpecifiedByEnvVar(t *testing.T) {
 }
 
 func TestInvalidDir(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("because I don't know how to specify 'invalid' directory path on Windows")
+	}
 	os.Setenv("DOT_GITHUB_HOME", "/")
 	defer func() {
 		if r := recover(); r == nil {
