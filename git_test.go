@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/mitchellh/go-homedir"
 	"os"
-	"os/user"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -64,12 +64,12 @@ func TestGitRoot(t *testing.T) {
 }
 
 func TestNonGitRepo(t *testing.T) {
-	u, err := user.Current()
+	home, err := homedir.Dir()
 	if err != nil {
 		panic(err)
 	}
 	wd, _ := os.Getwd()
-	os.Chdir(u.HomeDir)
+	os.Chdir(home)
 	defer func() {
 		if err := recover(); err == nil {
 			t.Errorf("panic must occur when current dir is not Git repo")

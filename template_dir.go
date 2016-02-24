@@ -1,19 +1,19 @@
 package main
 
 import (
+	"github.com/mitchellh/go-homedir"
 	"os"
-	"os/user"
 	"path"
 )
 
 func baseDir() string {
 	dir := os.Getenv("DOT_GITHUB_HOME")
 	if len(dir) == 0 {
-		u, err := user.Current()
+		var err error
+		dir, err = homedir.Dir()
 		if err != nil {
 			panic(err)
 		}
-		dir = u.HomeDir
 	}
 	return dir
 }
