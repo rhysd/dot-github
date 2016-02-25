@@ -22,7 +22,10 @@ func gitCmdPath() string {
 }
 
 func validateURL(u string) bool {
-	return strings.HasPrefix(u, "https") || strings.HasPrefix(u, "http") || strings.HasPrefix(u, "git@")
+	return strings.HasPrefix(u, "https://") ||
+		strings.HasPrefix(u, "http://") ||
+		strings.HasPrefix(u, "git@") ||
+		strings.HasPrefix(u, "git://")
 }
 
 func RemoteURL(name string) *url.URL {
@@ -57,7 +60,7 @@ func GitRoot() string {
 	}
 	root, err := filepath.Abs(rel)
 	if err != nil {
-		panic(err.Error() + ": " + strings.TrimSpace(string(out[:])))
+		panic(err.Error() + ": " + rel)
 	}
 	return root
 }

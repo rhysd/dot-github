@@ -11,10 +11,10 @@ type Repository struct {
 	Path string
 }
 
-func NewRepositoryFromHttpsURL(u *url.URL) *Repository {
+func NewRepositoryFromWebURL(u *url.URL) *Repository {
 	// TODO Check valid GitHub or GHE url
 	if u.Path == "" {
-		panic("Invalid https URL for GitHub: " + u.String())
+		panic("Invalid https URL for GitHub repository: " + u.String())
 	}
 	split := strings.SplitN(u.Path[1:], "/", 2)
 	return &Repository{
@@ -24,9 +24,9 @@ func NewRepositoryFromHttpsURL(u *url.URL) *Repository {
 	}
 }
 
-func NewRepositoryFromGitURL(u *url.URL) *Repository {
+func NewRepositoryFromSshURL(u *url.URL) *Repository {
 	if !strings.HasPrefix(u.Path, "git@") || !strings.Contains(u.Path, ":") {
-		panic("Invalid git@ URL for GitHub: " + u.String())
+		panic("Invalid git@ URL for GitHub repository: " + u.String())
 	}
 	// TODO Check valid GitHub or GHE url
 	split := strings.SplitN(
@@ -42,10 +42,13 @@ func NewRepositoryFromGitURL(u *url.URL) *Repository {
 }
 
 func NewRepositoryFromURL(u *url.URL) *Repository {
-	if u.Scheme == "https" {
-		return NewRepositoryFromHttpsURL(u)
-	} else if u.Scheme == "" {
-		return NewRepositoryFromGitURL(u)
+	switch u.Scheme {
+	case "https":
+		return NewRepositoryFromWebURL(u)
+	case "git":
+		return NewRepositoryFromWebURL(u)
+	case "":
+		return NewRepositoryFromSshURL(u)
 	}
 	panic("Invalid URL for GitHub: " + u.String())
 }
