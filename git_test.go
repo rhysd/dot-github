@@ -8,21 +8,21 @@ import (
 	"testing"
 )
 
-func TestRemoteURL(t *testing.T) {
-	o := RemoteURL("origin")
+func TestGitHubRemoteURL(t *testing.T) {
+	o := GitHubRemoteURL("origin")
 	if o == nil {
-		t.Fatalf("RemoteURL() must return non-empty URL")
+		t.Fatalf("GitHubRemoteURL() must return non-empty URL")
 	}
 	if !strings.Contains(o.String(), "dot-github") {
 		t.Fatalf("'origin' remote url is invalid: %v", o)
 	}
 }
 
-func TestRemoteURLWithEnvVar(t *testing.T) {
+func TestGitHubRemoteURLWithEnvVar(t *testing.T) {
 	os.Setenv("DOT_GITHUB_GIT_CMD", "git")
-	o := RemoteURL("origin")
+	o := GitHubRemoteURL("origin")
 	if o == nil {
-		t.Fatalf("RemoteURL() must return non-empty URL")
+		t.Fatalf("GitHubRemoteURL() must return non-empty URL")
 	}
 	if !strings.Contains(o.String(), "dot-github") {
 		t.Fatalf("'origin' remote url is invalid: %v", o)
@@ -30,7 +30,7 @@ func TestRemoteURLWithEnvVar(t *testing.T) {
 	os.Setenv("DOT_GITHUB_GIT_CMD", "")
 }
 
-func TestRemoteURLWithInvalidEnvVar(t *testing.T) {
+func TestGitHubRemoteURLWithInvalidEnvVar(t *testing.T) {
 	os.Setenv("DOT_GITHUB_GIT_CMD", "unknown-command")
 	defer func() {
 		if r := recover(); r == nil {
@@ -38,7 +38,7 @@ func TestRemoteURLWithInvalidEnvVar(t *testing.T) {
 		}
 		os.Setenv("DOT_GITHUB_GIT_CMD", "")
 	}()
-	RemoteURL("origin")
+	GitHubRemoteURL("origin")
 }
 
 func TestInvalidRemote(t *testing.T) {
@@ -47,7 +47,7 @@ func TestInvalidRemote(t *testing.T) {
 			t.Errorf("Uknown remote must cause panic")
 		}
 	}()
-	RemoteURL("uknown-remote-name")
+	GitHubRemoteURL("uknown-remote-name")
 }
 
 func TestGitRoot(t *testing.T) {
@@ -77,4 +77,76 @@ func TestNonGitRepo(t *testing.T) {
 		os.Chdir(wd)
 	}()
 	GitRoot()
+}
+
+func TestValidateURLs(t *testing.T) {
+	var b bool
+	b = ValidateGitHubURL("http://github.com/rhysd/dot-github.git")
+	if !b {
+		t.Errorf("Correct HTTP GitHub URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("https://github.com/rhysd/dot-github.git")
+	if !b {
+		t.Errorf("Correct HTTPS GitHub URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("git://github.com/rhysd/dot-github.git")
+	if !b {
+		t.Errorf("Correct GIT GitHub URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("git@github.com:rhysd/dot-github.git")
+	if !b {
+		t.Errorf("Correct SSH GitHub URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("http://github.company.com/rhysd/dot-github.git")
+	if !b {
+		t.Errorf("Correct HTTP GHE URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("https://github.company.com/rhysd/dot-github.git")
+	if !b {
+		t.Errorf("Correct HTTPS GHE URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("git://github.company.com/rhysd/dot-github.git")
+	if !b {
+		t.Errorf("Correct GIT GHE URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("git@github.company.com:rhysd/dot-github.git")
+	if !b {
+		t.Errorf("Correct SSH GHE URL was detected as invalid URL")
+	}
+}
+
+func TestInvalidateURLs(t *testing.T) {
+	var b bool
+	b = ValidateGitHubURL("http://example.com/rhysd/dot-example.git")
+	if b {
+		t.Errorf("Correct HTTP GitHub URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("https://example.com/rhysd/dot-example.git")
+	if b {
+		t.Errorf("Correct HTTPS GitHub URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("git://example.com/rhysd/dot-example.git")
+	if b {
+		t.Errorf("Correct GIT GitHub URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("git@example.com:rhysd/dot-example.git")
+	if b {
+		t.Errorf("Correct SSH GitHub URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("http://example.company.com/rhysd/dot-example.git")
+	if b {
+		t.Errorf("Correct HTTP GHE URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("https://example.company.com/rhysd/dot-example.git")
+	if b {
+		t.Errorf("Correct HTTPS GHE URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("git://example.company.com/rhysd/dot-example.git")
+	if b {
+		t.Errorf("Correct GIT GHE URL was detected as invalid URL")
+	}
+	b = ValidateGitHubURL("git@example.company.com:rhysd/dot-example.git")
+	if b {
+		t.Errorf("Correct SSH GHE URL was detected as invalid URL")
+	}
 }

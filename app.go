@@ -25,7 +25,7 @@ func (a *App) Run() int {
 
 	g := NewGenerator(
 		TemplateDir(),
-		NewRepositoryFromURL(RemoteURL("origin")),
+		NewRepositoryFromURL(GitHubRemoteURL("origin")),
 	)
 	if parsed.IssueOnly {
 		g.GenerateIssueTemplate()

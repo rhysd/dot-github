@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -21,22 +22,20 @@ func gitCmdPath() string {
 	return path
 }
 
-func validateURL(u string) bool {
-	return strings.HasPrefix(u, "https://") ||
-		strings.HasPrefix(u, "http://") ||
-		strings.HasPrefix(u, "git@") ||
-		strings.HasPrefix(u, "git://")
+func ValidateGitHubURL(u string) bool {
+	return regexp.MustCompile(`^(:?https|http|git)://github(:?\..+)?\.com`).MatchString(u) ||
+		regexp.MustCompile(`^git@github(:?\..+)?\.com:`).MatchString(u)
 }
 
-func RemoteURL(name string) *url.URL {
+func GitHubRemoteURL(name string) *url.URL {
 	cmd := exec.Command(gitCmdPath(), "ls-remote", "--get-url", name)
 	out, err := cmd.Output()
 	if err != nil {
 		panic(err)
 	}
 	u := string(out[:])
-	if !validateURL(u) {
-		panic("Invalid remote: " + name)
+	if !ValidateGitHubURL(u) {
+		panic("Invalid GitHub remote: " + name)
 	}
 	url, err := url.Parse(strings.TrimSpace(u))
 	if err != nil {
