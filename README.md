@@ -53,7 +53,7 @@ Tweak generated files in `your-repo/.github/*` for your project-specific informa
 
 ## Writing Template File
 
-You can see [example direcotry in this repository](exapmle/) for real world examples.
+You can see [example directory in this repository](example/) for real world examples.
 
 `dot-github` looks below template files
 
