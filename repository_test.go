@@ -35,7 +35,10 @@ func TestGitURL(t *testing.T) {
 }
 
 func TestSshURL(t *testing.T) {
-	u, _ := url.Parse("git@github.com:rhysd/dot-github.git")
+	u, err := url.Parse("git@github.com:rhysd/dot-github.git")
+	if err != nil {
+		t.Fatal(err)
+	}
 	r := NewRepositoryFromURL(u)
 	if r.User != "rhysd" {
 		t.Fatalf("User name is invalid: %v", r.User)

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -27,7 +26,7 @@ func ValidateGitHubURL(u string) bool {
 		regexp.MustCompile(`^git@github(:?\..+)?\.com:`).MatchString(u)
 }
 
-func GitHubRemoteURL(name string) *url.URL {
+func GitHubRemoteURL(name string) string {
 	cmd := exec.Command(gitCmdPath(), "ls-remote", "--get-url", name)
 	out, err := cmd.Output()
 	if err != nil {
@@ -37,12 +36,7 @@ func GitHubRemoteURL(name string) *url.URL {
 	if !ValidateGitHubURL(u) {
 		panic("Invalid GitHub remote: " + name)
 	}
-	url, err := url.Parse(strings.TrimSpace(u))
-	if err != nil {
-		panic(err)
-	}
-
-	return url
+	return strings.TrimSpace(u)
 }
 
 func GitRoot() string {

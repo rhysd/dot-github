@@ -24,13 +24,13 @@ func NewRepositoryFromWebURL(u *url.URL) *Repository {
 	}
 }
 
-func NewRepositoryFromSshURL(u *url.URL) *Repository {
-	if !strings.HasPrefix(u.Path, "git@") || !strings.Contains(u.Path, ":") {
-		panic("Invalid git@ URL for GitHub repository: " + u.String())
+func NewRepositoryFromSshURL(u string) *Repository {
+	if !strings.HasPrefix(u, "git@") || !strings.Contains(u, ":") {
+		panic("Invalid git@ URL for GitHub repository: " + u)
 	}
 	// TODO Check valid GitHub or GHE url
 	split := strings.SplitN(
-		strings.SplitN(u.Path, ":", 2)[1],
+		strings.SplitN(u, ":", 2)[1],
 		"/",
 		2,
 	)
@@ -41,14 +41,17 @@ func NewRepositoryFromSshURL(u *url.URL) *Repository {
 	}
 }
 
-func NewRepositoryFromURL(u *url.URL) *Repository {
+func NewRepositoryFromURL(s string) *Repository {
+	u, err := url.Parse(s)
+	if err != nil {
+		return NewRepositoryFromSshURL(s)
+	}
 	switch u.Scheme {
 	case "https":
 		return NewRepositoryFromWebURL(u)
 	case "git":
 		return NewRepositoryFromWebURL(u)
-	case "":
-		return NewRepositoryFromSshURL(u)
+	default:
+		panic("Invalid URL for GitHub: " + s)
 	}
-	panic("Invalid URL for GitHub: " + u.String())
 }

@@ -1,15 +1,23 @@
+<!-- Please replace {Please write here} with your description -->
 
-### Expected behavior
+### Expected Behavior
 
-Write here.
+{Please write here}
 
-### Actual behavior
+### Actual Behavior
 
-Write here.
+{Please write here}
 
-### Steps to reproduce behavior
+### Steps to Reproduce (including precondition)
 
-Write here.
+{Please write here}
 
+### Screenshot on This Problem (if possible)
 
+{Please write here}
+
+### Your Environment
+
+- OS: {Please write here}
+- dot-github version: {Please write here}
 

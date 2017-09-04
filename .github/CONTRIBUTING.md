@@ -1,12 +1,11 @@
 Thank you for contributing dot-github!
 =========================================
 
-English and Japanese are available.  Japanese is better but English is also OK.
+## Language
 
-## If you creating issue...
+I'm Japanese and not good English user.  So Japanese is the best language to communicate, but of course English is OK.
 
-Please write following issue template.  Do not forget describing how to reproduce.
+## Templates
 
-## If you creating pull request...
+Please use issue/PR templates which are inserted automatically.
 
-Please write following pull request template.
