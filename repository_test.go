@@ -1,14 +1,12 @@
 package main
 
 import (
-	"net/url"
 	"strings"
 	"testing"
 )
 
 func TestWebURL(t *testing.T) {
-	u, _ := url.Parse("https://github.com/rhysd/dot-github.git")
-	r := NewRepositoryFromURL(u)
+	r := NewRepositoryFromURL("https://github.com/rhysd/dot-github.git")
 	if r.User != "rhysd" {
 		t.Fatalf("User name is invalid: %v", r.User)
 	}
@@ -21,8 +19,7 @@ func TestWebURL(t *testing.T) {
 }
 
 func TestGitURL(t *testing.T) {
-	u, _ := url.Parse("git://github.com/rhysd/dot-github.git")
-	r := NewRepositoryFromURL(u)
+	r := NewRepositoryFromURL("git://github.com/rhysd/dot-github.git")
 	if r.User != "rhysd" {
 		t.Fatalf("User name is invalid: %v", r.User)
 	}
@@ -35,11 +32,7 @@ func TestGitURL(t *testing.T) {
 }
 
 func TestSshURL(t *testing.T) {
-	u, err := url.Parse("git@github.com:rhysd/dot-github.git")
-	if err != nil {
-		t.Fatal(err)
-	}
-	r := NewRepositoryFromURL(u)
+	r := NewRepositoryFromURL("git@github.com:rhysd/dot-github.git")
 	if r.User != "rhysd" {
 		t.Fatalf("User name is invalid: %v", r.User)
 	}
@@ -52,31 +45,28 @@ func TestSshURL(t *testing.T) {
 }
 
 func TestInvalidPath(t *testing.T) {
-	u, _ := url.Parse("https://github.com")
 	defer func() {
 		if r := recover(); r == nil {
 			t.Errorf("URL without path must cause panic")
 		}
 	}()
-	NewRepositoryFromURL(u)
+	NewRepositoryFromURL("https://github.com")
 }
 
 func TestInvalidGitURL(t *testing.T) {
-	u, _ := url.Parse("invalid-blah")
 	defer func() {
 		if r := recover(); r == nil {
 			t.Errorf("Invalid URL must cause panic")
 		}
 	}()
-	NewRepositoryFromURL(u)
+	NewRepositoryFromURL("invalid-blah")
 }
 
 func TestInvalidURLScheme(t *testing.T) {
-	u, _ := url.Parse("file://blah.jp")
 	defer func() {
 		if r := recover(); r == nil {
 			t.Errorf("Invalid Scheme must cause panic")
 		}
 	}()
-	NewRepositoryFromURL(u)
+	NewRepositoryFromURL("file://blah.jp")
 }

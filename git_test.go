@@ -10,10 +10,7 @@ import (
 
 func TestGitHubRemoteURL(t *testing.T) {
 	o := GitHubRemoteURL("origin")
-	if o == nil {
-		t.Fatalf("GitHubRemoteURL() must return non-empty URL")
-	}
-	if !strings.Contains(o.String(), "dot-github") {
+	if !strings.Contains(o, "dot-github") {
 		t.Fatalf("'origin' remote url is invalid: %v", o)
 	}
 }
@@ -21,10 +18,7 @@ func TestGitHubRemoteURL(t *testing.T) {
 func TestGitHubRemoteURLWithEnvVar(t *testing.T) {
 	os.Setenv("DOT_GITHUB_GIT_CMD", "git")
 	o := GitHubRemoteURL("origin")
-	if o == nil {
-		t.Fatalf("GitHubRemoteURL() must return non-empty URL")
-	}
-	if !strings.Contains(o.String(), "dot-github") {
+	if !strings.Contains(o, "dot-github") {
 		t.Fatalf("'origin' remote url is invalid: %v", o)
 	}
 	os.Setenv("DOT_GITHUB_GIT_CMD", "")

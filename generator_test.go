@@ -2,7 +2,6 @@ package main
 
 import (
 	"io/ioutil"
-	"net/url"
 	"os"
 	"path"
 	"runtime"
@@ -42,18 +41,13 @@ func chdirBackAndSweep(dir string) {
 }
 
 func newGeneratorForTest(workdir string) *Generator {
-	u, err := url.Parse("https://github.com/rhysd/dot-github.git")
-	if err != nil {
-		panic(err)
-	}
-	r := NewRepositoryFromURL(u)
+	r := NewRepositoryFromURL("https://github.com/rhysd/dot-github.git")
 	r.Path = path.Join(workdir, "repo")
 	return NewGenerator(path.Join(workdir, ".github"), r)
 }
 
 func TestDotGithubDir(t *testing.T) {
-	u, _ := url.Parse("https://github.com/rhysd/dot-github.git")
-	g := NewGenerator(TemplateDir(), NewRepositoryFromURL(u))
+	g := NewGenerator(TemplateDir(), NewRepositoryFromURL("https://github.com/rhysd/dot-github.git"))
 	if !strings.HasSuffix(g.dotGithubDir, "dot-github/.github") {
 		t.Fatalf("g.dotGithubDir must point to repository local .github directory: %v", g.dotGithubDir)
 	}
@@ -63,8 +57,7 @@ func TestInvalidRepositoryPath(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("because I don't know how to specify 'invalid' directory path on Windows")
 	}
-	u, _ := url.Parse("https://github.com/rhysd/dot-github.git")
-	r := NewRepositoryFromURL(u)
+	r := NewRepositoryFromURL("https://github.com/rhysd/dot-github.git")
 	r.Path = "/"
 	defer func() {
 		if r := recover(); r == nil {
