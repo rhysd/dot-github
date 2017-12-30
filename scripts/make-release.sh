@@ -7,8 +7,13 @@ mkdir -p release
 mv dot-github_* release/
 cd release
 for bin in `ls`; do
-    mv "$bin" dot-github
-    zip "${bin}.zip" dot-github
-    rm dot-github
+    if [[ "$bin" == *windows* ]]; then
+        command="dot-github.exe"
+    else
+        command="dot-github"
+    fi
+    mv "$bin" "$command"
+    zip "${bin}.zip" "$command"
+    rm "$command"
 done
 cd -
