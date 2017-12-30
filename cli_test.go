@@ -3,13 +3,12 @@ package main
 import (
 	"bytes"
 	"os"
-	"regexp"
 	"strings"
 	"testing"
 )
 
 func TestSpecifiedFlags(t *testing.T) {
-	os.Args = []string{"dot-github", "-issue", "-help", "-version", "-pullrequest", "-contributing"}
+	os.Args = []string{"dot-github", "-issue", "-help", "-version", "-pullrequest", "-contributing", "-selfupdate"}
 	p, err := ParseCmdArgs(os.Stderr)
 	if err != nil {
 		t.Fatalf("must be parsed without error")
@@ -29,6 +28,9 @@ func TestSpecifiedFlags(t *testing.T) {
 	if !p.Version {
 		t.Errorf("-version must be looked")
 	}
+	if !p.SelfUpdate {
+		t.Errorf("-selfupdate must be looked")
+	}
 }
 
 func TestUnspecifiedFlags(t *testing.T) {
@@ -38,19 +40,22 @@ func TestUnspecifiedFlags(t *testing.T) {
 		t.Fatalf("must be parsed without error")
 	}
 	if p.IssueOnly {
-		t.Errorf("-issue is not invalid default value")
+		t.Errorf("-issue is not valid default value")
 	}
 	if p.Help {
-		t.Errorf("-help is not invalid default value")
+		t.Errorf("-help is not valid default value")
 	}
 	if p.PROnly {
-		t.Errorf("-pullrequest is not invalid default value")
+		t.Errorf("-pullrequest is not valid default value")
 	}
 	if p.ContributingOnly {
-		t.Errorf("-contributing is not invalid default value")
+		t.Errorf("-contributing is not valid default value")
 	}
 	if p.Version {
-		t.Errorf("-version is not invalid default value")
+		t.Errorf("-version is not valid default value")
+	}
+	if p.SelfUpdate {
+		t.Errorf("-selfupdate is not valid default value")
 	}
 }
 
@@ -63,16 +68,6 @@ func TestUndefinedFlags(t *testing.T) {
 	}
 	if !strings.Contains(buf.String(), "Usage:") {
 		t.Fatalf("does not output usage")
-	}
-}
-
-func TestShowVersion(t *testing.T) {
-	os.Args = []string{"dot-github"}
-	p, _ := ParseCmdArgs(os.Stderr)
-	buf := &bytes.Buffer{}
-	p.ShowVersion(buf)
-	if m, err := regexp.Match(`\d\.\d\.\d`, buf.Bytes()); !m || err != nil {
-		t.Errorf("invalid version output: " + buf.String())
 	}
 }
 

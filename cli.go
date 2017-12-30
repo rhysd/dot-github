@@ -13,6 +13,7 @@ type Parsed struct {
 	IssueOnly        bool
 	PROnly           bool
 	ContributingOnly bool
+	SelfUpdate       bool
 	flags            *flag.FlagSet
 }
 
@@ -55,10 +56,6 @@ func (p *Parsed) ShowUsage(out io.Writer) {
 	p.flags.PrintDefaults()
 }
 
-func (p *Parsed) ShowVersion(out io.Writer) {
-	fmt.Fprintln(out, "1.2.0")
-}
-
 func ParseCmdArgs(err_out io.Writer) (*Parsed, error) {
 	var (
 		help         bool
@@ -66,6 +63,7 @@ func ParseCmdArgs(err_out io.Writer) (*Parsed, error) {
 		issue        bool
 		pr           bool
 		contributing bool
+		selfUpdate   bool
 	)
 
 	flags := flag.NewFlagSet("dot-github", flag.ContinueOnError)
@@ -76,6 +74,7 @@ func ParseCmdArgs(err_out io.Writer) (*Parsed, error) {
 	flags.BoolVar(&issue, "issue", false, "Import ISSUE_TEMPLATE.md only")
 	flags.BoolVar(&pr, "pullrequest", false, "Import PULL_REQUEST_TEMPLATE.md only")
 	flags.BoolVar(&contributing, "contributing", false, "Import CONTRIBUTING.md only")
+	flags.BoolVar(&selfUpdate, "selfupdate", false, "Update dot-github binary itself")
 
 	flags.Usage = func() {
 		fmt.Fprintln(err_out, Usage)
@@ -92,6 +91,7 @@ func ParseCmdArgs(err_out io.Writer) (*Parsed, error) {
 		issue,
 		pr,
 		contributing,
+		selfUpdate,
 		flags,
 	}, nil
 }

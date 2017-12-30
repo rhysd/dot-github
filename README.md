@@ -152,6 +152,10 @@ Thank you for contributing my-project!
 Please follow issue/PR template.
 ```
 
+## Update `dot-github` command
+
+To update `dot-github` command, `-selfupdate` flag is recommended.
+
 ## References
 
 - [Setting guidelines for repository contributors](https://help.github.com/articles/setting-guidelines-for-repository-contributors/)
