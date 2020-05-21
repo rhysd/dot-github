@@ -3,9 +3,9 @@ Thank you for contributing dot-github!
 
 ## Language
 
-I'm Japanese and not good English user.  So Japanese is the best language to communicate, but of course English is OK.
+Please use either Japanese or English, Japanese is the preferred language as I am a native Japanese speaker and my English is sometimes limited.
 
 ## Templates
 
-Please use issue/PR templates which are inserted automatically.
+Please use the issue/PR templates which are inserted automatically.
 
