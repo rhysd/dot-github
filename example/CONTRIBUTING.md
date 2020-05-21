@@ -1,12 +1,12 @@
-Thank you for contributing {{.RepoName}}!
+Thank you for contributing to {{.RepoName}}!
 =========================================
 
-English and Japanese are available.  Japanese is better but English is also OK.
+You can speak in Japanese or English.  Japanese is better but English is also OK.
 
-## If you creating issue...
+## If you are creating an issue...
 
-Please write following issue template.  Do not forget describing how to reproduce.
+Please use the issue template.  Do not forget to describe how to reproduce the issue.
 
-## If you creating pull request...
+## If you are creating a pull request...
 
-Please write following pull request template.
+Please use the pull request template.
